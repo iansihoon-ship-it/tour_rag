@@ -97,6 +97,18 @@ def generate_mock_data():
     base_locations["LC_LA"].fillna(37.5665, inplace=True)
     base_locations["LC_LO"].fillna(126.9780, inplace=True)
     
+    descriptions = []
+    for _, row in base_locations.iterrows():
+        if row["테마"] == "K-Movie":
+            movies = ["오징어 게임", "이태원 클라쓰", "사랑의 불시착", "기생충", "빈센조", "도깨비", "눈물의 여왕"]
+            descriptions.append(f"'{np.random.choice(movies)}' 촬영지")
+        elif row["테마"] == "핫플레이스":
+            reasons = ["SNS 인증샷 핫플", "2030 방문자 1위", "최근 1개월 검색량 폭발", "주말 웨이팅 성지"]
+            descriptions.append(np.random.choice(reasons))
+        else:
+            descriptions.append("현지인이 즐겨찾는 명소")
+    base_locations["설명"] = descriptions
+    
     return popular_df, base_locations
 
 # =====================================================================
@@ -266,20 +278,17 @@ def render_list(df, t):
     display_df = df.sort_values(by="추천점수", ascending=False).head(10).reset_index(drop=True)
     display_df.index = display_df.index + 1
     
-    styled_df = display_df[["관심지점명", "테마", "연령대", "거리(km)", "AVRG_SCORE_VALUE", "REVIEW_CO", "추천점수"]]
+    styled_df = display_df[["관심지점명", "테마", "설명", "거리(km)", "AVRG_SCORE_VALUE", "REVIEW_CO", "추천점수"]]
     
     # Translate dataframe cells if necessary
     if "theme_options_disp" in t:
         theme_map = dict(zip(["K-Movie", "핫플레이스", "일반"], t["theme_options_disp"]))
         styled_df["테마"] = styled_df["테마"].map(theme_map)
-    if "age_options_disp" in t:
-        age_map = dict(zip(["전체", "20대", "30대", "40대", "50대이상"], t["age_options_disp"]))
-        styled_df["연령대"] = styled_df["연령대"].map(age_map)
         
     styled_df = styled_df.rename(columns={
         "관심지점명": t["col_name"],
         "테마": t["col_theme"],
-        "연령대": t["col_age"],
+        "설명": t.get("col_desc", "설명"),
         "거리(km)": t["col_dist"],
         "AVRG_SCORE_VALUE": t["col_score"],
         "REVIEW_CO": t["col_review"],
