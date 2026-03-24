@@ -59,7 +59,7 @@ def generate_mock_data():
     })
     
     # 2. 메인 관광지 로케이션 데이터 (지도 매핑용)
-    num_locations = 50
+    num_locations = 200
     lats = np.random.uniform(37.45, 37.60, num_locations)
     lons = np.random.uniform(126.85, 127.15, num_locations)
     
