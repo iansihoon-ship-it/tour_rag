@@ -308,10 +308,37 @@ def render_chatbot(df, t):
         with st.chat_message(msg["role"]):
             st.markdown(msg["content"])
             
-    with st.container(bottom=True):
-        st.subheader(t["chat_title"])
-        st.caption(t["chat_desc"])
-        user_input = st.chat_input(t["chat_ph"])
+    # Fixed chat header using custom CSS
+    st.markdown(f"""
+        <style>
+        .fixed-chat-title {{
+            position: fixed;
+            bottom: 6rem;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 999;
+            text-align: center;
+            pointer-events: none;
+        }}
+        .fixed-chat-title-box {{
+            background-color: var(--background-color);
+            border: 1px solid var(--secondary-background-color);
+            border-radius: 8px;
+            padding: 8px 16px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            display: inline-block;
+            pointer-events: auto;
+        }}
+        </style>
+        <div class="fixed-chat-title">
+            <div class="fixed-chat-title-box">
+                <b style="color: var(--text-color);">{t['chat_title']}</b><br>
+                <span style="font-size: 0.85em; color: gray;">{t['chat_desc']}</span>
+            </div>
+        </div>
+    """, unsafe_allow_html=True)
+    
+    user_input = st.chat_input(t["chat_ph"])
     
     if user_input:
         st.session_state.messages.append({"role": "user", "content": user_input})
