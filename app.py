@@ -28,7 +28,7 @@ SEOUL_LOCATIONS = {
 
 # 페이지 설정
 st.set_page_config(
-    page_title="서울 맞춤형 관광지 추천 대시보드",
+    page_title="관광지 추천 & cs챗봇 서비스",
     page_icon="🗺️",
     layout="wide",
     initial_sidebar_state="expanded"
@@ -77,7 +77,7 @@ def generate_mock_data():
     ]
     
     base_locations = pd.DataFrame({
-        "관심지점명": np.random.choice(real_places_pool, num_locations, replace=False),
+        "관심지점명": np.random.choice(real_places_pool, num_locations, replace=True),
         "구분": np.random.choice(["관광명소", "맛집/카페", "쇼핑", "공원"], num_locations),
         "테마": np.random.choice(["일반", "K-Movie", "핫플레이스"], num_locations, p=[0.5, 0.2, 0.3]),
         "LC_LA": lats, # 위도

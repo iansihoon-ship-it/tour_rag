@@ -1,6 +1,6 @@
 TRANSLATIONS = {
     "ko": {
-        "title": "🌐 세대 및 위치 기반 서울 관광지 추천 대시보드",
+        "title": "🌐 관광지 추천 & cs챗봇 서비스",
         "sidebar_lang": "🌐 언어 설정 / Language",
         "sidebar_title": "📍 추천 설정 필터",
         "sidebar_loc": "1. 나의 현재 위치",
@@ -51,7 +51,7 @@ TRANSLATIONS = {
         "chat_footer": "\n이외에도 지도와 하단 리스트에서 다양한 대안을 확인하실 수 있습니다!"
     },
     "en": {
-        "title": "🌐 Seoul Tourist Spot Recommendation Dashboard",
+        "title": "🌐 Tourist Recommendation & CS Chatbot Service",
         "sidebar_lang": "🌐 Language",
         "sidebar_title": "📍 Recommendation Filters",
         "sidebar_loc": "1. My Current Location",
@@ -99,7 +99,7 @@ TRANSLATIONS = {
         "chat_footer": "\nYou can check out other alternatives on the map and the list below!"
     },
     "zh": {
-        "title": "🌐 首尔旅游景点推荐仪表板",
+        "title": "🌐 旅游景点推荐及CS聊天机器人服务",
         "sidebar_lang": "🌐 语言 / Language",
         "sidebar_title": "📍 推介设置过滤器",
         "sidebar_loc": "1. 我的当前位置",
