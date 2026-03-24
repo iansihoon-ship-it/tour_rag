@@ -193,20 +193,30 @@ import urllib.parse
 import re
 
 @st.cache_data(ttl=86400, show_spinner=False)
-def get_google_image_url(keyword):
+def fetch_google_image(keyword):
+    """Fetch the first image result from Google Images, fallback to placeholder."""
     try:
-        query = urllib.parse.quote(keyword + " 명소")
+        query = urllib.parse.quote(keyword)
         url = f"https://www.google.com/search?tbm=isch&q={query}"
-        req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'})
+        
+        req = urllib.request.Request(
+            url, 
+            headers={'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/120.0.0.0 Safari/537.36'}
+        )
+        
         with urllib.request.urlopen(req, timeout=3) as response:
             html = response.read().decode('utf-8', errors='ignore')
-            urls = re.findall(r'<img[^>]+src="([^">]+)"', html)
-            for img_url in urls:
-                if img_url.startswith('http') and 'images?q=tbn' in img_url:
-                    return img_url
-    except Exception:
+            
+            # Google often embeds thumbnail images starting with https://encrypted-tbn...
+            urls = re.findall(r'<img[^>]*src="([^"]*encrypted-tbn[^"]+)"', html)
+            if urls:
+                return urls[0]
+                
+    except Exception as e:
+        print("Google Image Fetch Error:", e)
         pass
-    # Fallback
+        
+    # Final fallback
     seed = sum(ord(c) for c in keyword)
     return f"https://picsum.photos/seed/{seed}/400/300"
 
@@ -227,7 +237,7 @@ def render_route(df, t):
     for idx, (col, row) in enumerate(zip(cols, top_route.iterrows())):
         _, data = row
         with col:
-            img_url = get_google_image_url(data["관심지점명"])
+            img_url = fetch_google_image(data["관심지점명"])
             st.image(img_url, use_container_width=True)
             st.markdown(f"**Step {idx+1}. {data['관심지점명']}**")
             st.caption(f"{data['테마']} | ⭐ {data['AVRG_SCORE_VALUE']}")
