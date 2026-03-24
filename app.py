@@ -301,9 +301,6 @@ def render_list(df, t):
 # =====================================================================
 
 def render_chatbot(df, t):
-    st.subheader(t["chat_title"])
-    st.caption(t["chat_desc"])
-    
     if "messages" not in st.session_state:
         st.session_state["messages"] = [{"role": "assistant", "content": t["chat_hi"]}]
         
@@ -311,7 +308,10 @@ def render_chatbot(df, t):
         with st.chat_message(msg["role"]):
             st.markdown(msg["content"])
             
-    user_input = st.chat_input(t["chat_ph"])
+    with st.container(bottom=True):
+        st.subheader(t["chat_title"])
+        st.caption(t["chat_desc"])
+        user_input = st.chat_input(t["chat_ph"])
     
     if user_input:
         st.session_state.messages.append({"role": "user", "content": user_input})
