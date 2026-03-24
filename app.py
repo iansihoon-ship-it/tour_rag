@@ -308,34 +308,37 @@ def render_chatbot(df, t):
         with st.chat_message(msg["role"]):
             st.markdown(msg["content"])
             
-    # Fixed chat header using custom CSS
+    # Extend chat input container white space and inject header via pseudo-elements
     st.markdown(f"""
         <style>
-        .fixed-chat-title {{
-            position: fixed;
-            bottom: 9rem;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 999;
+        div[data-testid="stChatInput"] {{
+            padding-top: 70px !important;
+            position: relative;
+        }}
+        div[data-testid="stChatInput"]::before {{
+            content: "{t['chat_title']}";
+            position: absolute;
+            top: 10px;
+            left: 0;
+            width: 100%;
             text-align: center;
+            color: var(--text-color);
+            font-weight: bold;
+            font-size: 1.05rem;
             pointer-events: none;
         }}
-        .fixed-chat-title-box {{
-            background-color: var(--background-color);
-            border: 1px solid var(--secondary-background-color);
-            border-radius: 8px;
-            padding: 8px 16px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            display: inline-block;
-            pointer-events: auto;
+        div[data-testid="stChatInput"]::after {{
+            content: "{t['chat_desc']}";
+            position: absolute;
+            top: 36px;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            color: gray;
+            font-size: 0.85rem;
+            pointer-events: none;
         }}
         </style>
-        <div class="fixed-chat-title">
-            <div class="fixed-chat-title-box">
-                <b style="color: var(--text-color);">{t['chat_title']}</b><br>
-                <span style="font-size: 0.85em; color: gray;">{t['chat_desc']}</span>
-            </div>
-        </div>
     """, unsafe_allow_html=True)
     
     user_input = st.chat_input(t["chat_ph"])
