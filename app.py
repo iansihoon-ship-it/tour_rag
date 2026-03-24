@@ -313,7 +313,7 @@ def render_chatbot(df, t):
         <style>
         .fixed-chat-title {{
             position: fixed;
-            bottom: 6rem;
+            bottom: 9rem;
             left: 50%;
             transform: translateX(-50%);
             z-index: 999;
