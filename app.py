@@ -188,48 +188,33 @@ def render_sidebar(t, lang):
     
     return current_lat, current_lon, radius_km, age_group, theme
 
-def render_kpi_cards(df, t):
+def render_route(df, t):
+    st.markdown(f"### {t['route_title']}")
+    
     if df.empty:
-        st.warning(t["no_data"])
+        st.info(t["no_data"])
         return
         
-    col1, col2, col3, col4 = st.columns(4)
-    avg_score = round(df["AVRG_SCORE_VALUE"].mean(), 1)
-    max_review_idx = df["REVIEW_CO"].idxmax()
-    top_place = df.loc[max_review_idx, "관심지점명"]
-    total_spots = len(df)
+    top_route = df.sort_values("추천점수", ascending=False).head(3)
     
-    with col1:
-        st.metric(label=t["kpi_total"], value=f"{total_spots}{t['kpi_total_unit']}")
-    with col2:
-        st.metric(label=t["kpi_avg"], value=f"{avg_score} / 5.0")
-    with col3:
-        st.metric(label=t["kpi_best"], value=top_place)
-    with col4:
-        st.metric(label=t["kpi_max"], value=f"{df['추천점수'].max():.1f}{t['kpi_max_unit']}")
+    if len(top_route) == 0:
+        return
         
-    st.markdown("<br>", unsafe_allow_html=True)
+    cols = st.columns(len(top_route))
     
-    theme_scores = df.groupby("테마")["추천점수"].mean().reset_index()
-    # Replace theme texts for chart
-    if "theme_options_disp" in t:
-        theme_map = dict(zip(["K-Movie", "핫플레이스", "일반"], t["theme_options_disp"]))
-        theme_scores["테마_disp"] = theme_scores["테마"].map(theme_map)
-    else:
-        theme_scores["테마_disp"] = theme_scores["테마"]
-        
-    fig = px.bar(
-        theme_scores, 
-        x="테마_disp", 
-        y="추천점수", 
-        color="테마_disp",
-        title=t["chart_title"],
-        text_auto=".1f",
-        template="plotly_white",
-        height=300
-    )
-    fig.update_layout(showlegend=False, margin=dict(l=20, r=20, t=40, b=20), xaxis_title='', yaxis_title='')
-    st.plotly_chart(fig, use_container_width=True)
+    for idx, (col, row) in enumerate(zip(cols, top_route.iterrows())):
+        _, data = row
+        with col:
+            seed = sum(ord(c) for c in data["관심지점명"])
+            img_url = f"https://picsum.photos/seed/{seed}/400/300"
+            st.image(img_url, use_container_width=True)
+            st.markdown(f"**Step {idx+1}. {data['관심지점명']}**")
+            st.caption(f"{data['테마']} | ⭐ {data['AVRG_SCORE_VALUE']}")
+            st.write(data["설명"])
+            
+    st.write("")
+    route_str = " ➔ ".join(top_route['관심지점명'].tolist())
+    st.info(f"**{t['route_summary']}**: {route_str}")
         
 def render_map(df, current_lat, current_lon, t):
     m = folium.Map(location=[current_lat, current_lon], zoom_start=12)
@@ -432,7 +417,7 @@ def main():
     render_map(final_df, current_lat, current_lon, t)
     
     st.markdown("---")
-    render_kpi_cards(final_df, t)
+    render_route(final_df, t)
     
     st.markdown("---")
     render_chatbot(final_df, t)
